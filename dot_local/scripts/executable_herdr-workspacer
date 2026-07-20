@@ -5,7 +5,7 @@
 #
 # Usage:
 #   herdr-workspacer           # use the current (or default) session
-#   herdr-workspacer notive    # use the named "notive" session when outside Herdr
+#   herdr-workspacer work      # use the named "work" session when outside Herdr
 
 if [[ $# -gt 1 ]]; then
     echo "usage: herdr-workspacer [session-name]" >&2
@@ -20,22 +20,20 @@ if [[ -n ${HERDR_PANE_ID:-} && -n $session_name ]]; then
     exit 2
 fi
 
-selected=$({
-    find ~/personal -mindepth 1 -maxdepth 1 -type d
-    find ~/notive ~/resolph -mindepth 2 -maxdepth 2 -type d
-} | fzf)
+select_workspace() {
+    {
+        find ~/personal -mindepth 1 -maxdepth 1 -type d
+        find ~/notive ~/resolph -mindepth 2 -maxdepth 2 -type d
+    } | fzf
+}
 
-if [[ -z $selected ]]; then
-    exit 0
-fi
+create_workspace() {
+    herdr workspace create --cwd "$selected" --label "$workspace_label" --focus >/dev/null
+}
 
-# Use an absolute, resolved path, matching the cwd stored by Herdr.
-selected="$(cd -- "$selected" && pwd -P)" || exit 1
-workspace_label="$(basename "$(dirname "$selected")")/$(basename "$selected")"
+focus_workspace() {
+    local workspace_id
 
-# Reuse the workspace for this repository when it already exists. Otherwise
-# create and focus one through the surrounding Herdr server's API.
-if [[ -n ${HERDR_PANE_ID:-} ]]; then
     workspace_id="$(
         herdr workspace list |
             jq -r --arg cwd "$selected" --arg label "$workspace_label" '
@@ -53,8 +51,22 @@ if [[ -n ${HERDR_PANE_ID:-} ]]; then
     if [[ -n $workspace_id ]]; then
         herdr workspace focus "$workspace_id" >/dev/null
     else
-        herdr workspace create --cwd "$selected" --label "$workspace_label" --focus >/dev/null
+        create_workspace
     fi
+}
+
+selected=$(select_workspace)
+
+if [[ -z $selected ]]; then
+    exit 0
+fi
+
+# Use an absolute, resolved path, matching the cwd stored by Herdr.
+selected="$(cd -- "$selected" && pwd -P)" || exit 1
+workspace_label="$(basename "$(dirname "$selected")")/$(basename "$selected")"
+
+if [[ -n ${HERDR_PANE_ID:-} ]]; then
+    focus_workspace
 else
     if [[ -n $session_name ]]; then
         cd -- "$selected"
