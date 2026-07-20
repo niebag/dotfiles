@@ -29,24 +29,93 @@ select_workspace() {
 
 create_workspace() {
     herdr workspace create --cwd "$selected" --label "$workspace_label" --focus >/dev/null
+
+    workspace_id=$(find_workspace)
+    if [[ -z $workspace_id ]]; then
+        echo "Could not find the newly created $workspace_label workspace." >&2
+        exit 1
+    fi
+
+    create_workspace_tabs
 }
 
-focus_workspace() {
-    local workspace_id
+find_workspace() {
+    herdr workspace list |
+        jq -r --arg cwd "$selected" --arg label "$workspace_label" '
+            (.result.workspaces // .workspaces // [])[]? |
+            select(
+                .label == $label or
+                .workspace.label == $label or
+                (.root_pane.cwd? // .cwd? // "") == $cwd
+            ) |
+            (.workspace_id // .workspace.workspace_id // empty)
+        ' |
+        head -n 1
+}
 
-    workspace_id="$(
-        herdr workspace list |
-            jq -r --arg cwd "$selected" --arg label "$workspace_label" '
-                (.result.workspaces // .workspaces // [])[]? |
-                select(
-                    .label == $label or
-                    .workspace.label == $label or
-                    (.root_pane.cwd? // .cwd? // "") == $cwd
-                ) |
-                (.workspace_id // .workspace.workspace_id // empty)
+find_tab() {
+    local tab_label=$1
+
+    herdr tab list --workspace "$workspace_id" |
+        jq -r --arg label "$tab_label" '
+            (.result.tabs // .tabs // [])[]? |
+            select(.label == $label) |
+            .tab_id // empty
+        ' |
+        head -n 1
+}
+
+run_command() {
+    local tab_id=$1 command=$2 pane_id
+
+    pane_id="$(
+        herdr pane list --workspace "$workspace_id" |
+            jq -r --arg tab_id "$tab_id" '
+                (.result.panes // .panes // [])[]? |
+                select(.tab_id == $tab_id) |
+                .pane_id // empty
             ' |
             head -n 1
     )"
+
+    if [[ -n $pane_id ]]; then
+        herdr pane run "$pane_id" "$command" >/dev/null
+    fi
+}
+
+create_workspace_tabs() {
+    local app_tab_id git_tab_id claude_tab_id cursor_tab_id
+
+    app_tab_id="$(
+        herdr tab list --workspace "$workspace_id" |
+            jq -r '(.result.tabs // .tabs // [])[]? | .tab_id // empty' |
+            head -n 1
+    )"
+    if [[ -n $app_tab_id ]]; then
+        herdr tab rename "$app_tab_id" app >/dev/null
+    fi
+
+    herdr tab create --workspace "$workspace_id" --cwd "$selected" --label git --no-focus >/dev/null
+    git_tab_id=$(find_tab git)
+    run_command "$git_tab_id" 'git status'
+
+    herdr tab create --workspace "$workspace_id" --cwd "$selected" --label zsh --no-focus >/dev/null
+
+    herdr tab create --workspace "$workspace_id" --cwd "$selected" --label claude --no-focus >/dev/null
+    claude_tab_id=$(find_tab claude)
+    run_command "$claude_tab_id" 'claude --permission-mode auto'
+
+    herdr tab create --workspace "$workspace_id" --cwd "$selected" --label cursor --no-focus >/dev/null
+    cursor_tab_id=$(find_tab cursor)
+    run_command "$cursor_tab_id" 'cursor agent'
+
+    if [[ -n $app_tab_id ]]; then
+        herdr tab focus "$app_tab_id" >/dev/null
+    fi
+}
+
+focus_workspace() {
+    workspace_id="$(find_workspace)"
 
     if [[ -n $workspace_id ]]; then
         herdr workspace focus "$workspace_id" >/dev/null
@@ -54,6 +123,8 @@ focus_workspace() {
         create_workspace
     fi
 }
+
+workspace_id=""
 
 selected=$(select_workspace)
 
