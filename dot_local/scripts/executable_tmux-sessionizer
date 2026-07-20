@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+
+if [[ $# -eq 1 ]]; then
+    selected=$1
+else
+    selected=$({ find ~/personal -mindepth 1 -maxdepth 1 -type d; find ~/notive ~/resolph -mindepth 2 -maxdepth 2 -type d; } | fzf)
+fi
+
+if [[ -z $selected ]]; then
+    exit 0
+fi
+
+selected_name="$(basename "$(dirname "$selected")")/$(basename "$selected" | tr . _)"
+tmux_running=$(pgrep tmux)
+
+create_session() {
+    local name=$1 dir=$2
+    tmux new-session -ds "$name" -c "$dir" -n app
+    tmux new-window  -t "$name:" -c "$dir" -n git
+    tmux send-keys   -t "$name:git" 'git status' Enter
+    tmux new-window  -t "$name:" -c "$dir" -n zsh
+    tmux new-window  -t "$name:" -c "$dir" -n claude
+    tmux send-keys   -t "$name:claude" 'claude --allow-dangerously-skip-permissions' Enter
+    tmux new-window  -t "$name:" -c "$dir" -n cursor
+    tmux send-keys   -t "$name:cursor" 'cursor agent --yolo' Enter
+    tmux select-window -t "$name:app"
+}
+
+if [[ -z $TMUX ]] && [[ -z $tmux_running ]]; then
+    create_session "$selected_name" "$selected"
+    tmux attach -t "$selected_name"
+    exit 0
+fi
+
+if ! tmux has-session -t=$selected_name 2> /dev/null; then
+    create_session "$selected_name" "$selected"
+fi
+
+if [[ -z $TMUX ]]; then
+    tmux attach -t $selected_name
+else
+    tmux switch-client -t $selected_name
+fi
