@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+# Create or switch to the tmux session for the isolated LLM wiki vaults.
+# The session opens one Claude window each for Personal, Notive, and Resolph.
+#
+# Usage:
+#   tmux-llm-wikis
+
 SESSION="llm-wikis"
 WIKI_ROOT="/Users/niels/Library/Mobile Documents/iCloud~md~obsidian/Documents/llm-wikis"
 

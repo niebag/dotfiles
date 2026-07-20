@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
+# Pick a repository and create or switch to its tmux session. New sessions
+# include windows for the app, Git, Zsh, Claude, and Cursor.
+#
+# Usage:
+#   tmux-sessionizer           # choose a repository with fzf
+#   tmux-sessionizer <path>    # use the specified repository
+
 if [[ $# -eq 1 ]]; then
     selected=$1
 else
