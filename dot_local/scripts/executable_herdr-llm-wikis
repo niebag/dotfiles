@@ -41,8 +41,8 @@ find_tab() {
         head -n 1
 }
 
-start_claude() {
-    local tab_id=$1 pane_id
+start_agent() {
+    local tab_id=$1 command=$2 pane_id
 
     pane_id="$(
         herdr pane list --workspace "$workspace_id" |
@@ -55,7 +55,7 @@ start_claude() {
     )"
 
     if [[ -n $pane_id ]]; then
-        herdr pane run "$pane_id" 'claude --allow-dangerously-skip-permissions' >/dev/null
+        herdr pane run "$pane_id" "$command" >/dev/null
     fi
 }
 
@@ -70,16 +70,16 @@ create_vault_tabs() {
 
     if [[ -n $personal_tab_id ]]; then
         herdr tab rename "$personal_tab_id" personal >/dev/null
-        start_claude "$personal_tab_id"
+        start_agent "$personal_tab_id" 'codex -a on-request'
     fi
 
     herdr tab create --workspace "$workspace_id" --cwd "$WIKI_ROOT/Notive" --label notive --no-focus >/dev/null
     notive_tab_id=$(find_tab notive)
-    start_claude "$notive_tab_id"
+    start_agent "$notive_tab_id" 'claude --permission-mode auto'
 
     herdr tab create --workspace "$workspace_id" --cwd "$WIKI_ROOT/Resolph" --label resolph --no-focus >/dev/null
     resolph_tab_id=$(find_tab resolph)
-    start_claude "$resolph_tab_id"
+    start_agent "$resolph_tab_id" 'codex -a on-request'
 }
 
 workspace_id=$(find_workspace)

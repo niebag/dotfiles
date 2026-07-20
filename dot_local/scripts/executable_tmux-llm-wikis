@@ -13,13 +13,13 @@ tmux_running=$(pgrep tmux)
 
 create_session() {
     tmux new-session -ds "$SESSION" -c "$WIKI_ROOT/Personal" -n personal
-    tmux send-keys -t "$SESSION:personal" 'claude --allow-dangerously-skip-permissions' Enter
+    tmux send-keys -t "$SESSION:personal" 'codex -a on-request' Enter
 
     tmux new-window -t "$SESSION:" -c "$WIKI_ROOT/Notive" -n notive
-    tmux send-keys -t "$SESSION:notive" 'claude --allow-dangerously-skip-permissions' Enter
+    tmux send-keys -t "$SESSION:notive" 'claude --permission-mode auto' Enter
 
     tmux new-window -t "$SESSION:" -c "$WIKI_ROOT/Resolph" -n resolph
-    tmux send-keys -t "$SESSION:resolph" 'claude --allow-dangerously-skip-permissions' Enter
+    tmux send-keys -t "$SESSION:resolph" 'codex -a on-request' Enter
 
     tmux select-window -t "$SESSION:personal"
 }
