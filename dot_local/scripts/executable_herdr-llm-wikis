@@ -1,58 +1,99 @@
 #!/usr/bin/env bash
 
-# Pick an LLM wiki vault and focus its workspace in the default Herdr session.
-# Each vault remains isolated in its own workspace.
+# Create or focus an LLM wiki workspace in the default Herdr session.
+# The workspace contains one tab per isolated vault.
 #
 # Usage:
 #   herdr-llm-wikis
 
+WORKSPACE_LABEL="llm-wikis"
 WIKI_ROOT="/Users/niels/Library/Mobile Documents/iCloud~md~obsidian/Documents"
 
-select_workspace() {
-    printf '%s\n' "$WIKI_ROOT"/{Personal,Notive,Resolph} | fzf
-}
-
-create_workspace() {
-    herdr workspace create --cwd "$selected" --label "$workspace_label" --focus >/dev/null
-}
-
-focus_workspace() {
+find_workspace() {
     local workspace_id
 
     workspace_id="$(
         herdr workspace list |
-            jq -r --arg cwd "$selected" --arg label "$workspace_label" '
+            jq -r --arg label "$WORKSPACE_LABEL" '
                 (.result.workspaces // .workspaces // [])[]? |
-                select(
-                    .label == $label or
-                    .workspace.label == $label or
-                    (.root_pane.cwd? // .cwd? // "") == $cwd
-                ) |
+                select(.label == $label or .workspace.label == $label) |
                 (.workspace_id // .workspace.workspace_id // empty)
             ' |
             head -n 1
     )"
 
-    if [[ -n $workspace_id ]]; then
-        herdr workspace focus "$workspace_id" >/dev/null
-    else
-        create_workspace
+    printf '%s\n' "$workspace_id"
+}
+
+create_workspace() {
+    herdr workspace create --cwd "$WIKI_ROOT/Personal" --label "$WORKSPACE_LABEL" --focus >/dev/null
+}
+
+find_tab() {
+    local tab_label=$1
+
+    herdr tab list --workspace "$workspace_id" |
+        jq -r --arg label "$tab_label" '
+            (.result.tabs // .tabs // [])[]? |
+            select(.label == $label) |
+            .tab_id // empty
+        ' |
+        head -n 1
+}
+
+start_claude() {
+    local tab_id=$1 pane_id
+
+    pane_id="$(
+        herdr pane list --workspace "$workspace_id" |
+            jq -r --arg tab_id "$tab_id" '
+                (.result.panes // .panes // [])[]? |
+                select(.tab_id == $tab_id) |
+                .pane_id // empty
+            ' |
+            head -n 1
+    )"
+
+    if [[ -n $pane_id ]]; then
+        herdr pane run "$pane_id" 'claude --allow-dangerously-skip-permissions' >/dev/null
     fi
 }
 
-selected=$(select_workspace)
+create_vault_tabs() {
+    local personal_tab_id notive_tab_id resolph_tab_id
 
-if [[ -z $selected ]]; then
-    exit 0
-fi
+    personal_tab_id="$(
+        herdr tab list --workspace "$workspace_id" |
+            jq -r '(.result.tabs // .tabs // [])[]? | .tab_id // empty' |
+            head -n 1
+    )"
 
-# Use an absolute, resolved path, matching the cwd stored by Herdr.
-selected="$(cd -- "$selected" && pwd -P)" || exit 1
-workspace_label="$(basename "$(dirname "$selected")")/$(basename "$selected")"
+    if [[ -n $personal_tab_id ]]; then
+        herdr tab rename "$personal_tab_id" personal >/dev/null
+        start_claude "$personal_tab_id"
+    fi
 
-if [[ -n ${HERDR_PANE_ID:-} ]]; then
-    focus_workspace
+    herdr tab create --workspace "$workspace_id" --cwd "$WIKI_ROOT/Notive" --label notive --no-focus >/dev/null
+    notive_tab_id=$(find_tab notive)
+    start_claude "$notive_tab_id"
+
+    herdr tab create --workspace "$workspace_id" --cwd "$WIKI_ROOT/Resolph" --label resolph --no-focus >/dev/null
+    resolph_tab_id=$(find_tab resolph)
+    start_claude "$resolph_tab_id"
+}
+
+workspace_id=$(find_workspace)
+
+if [[ -n $workspace_id ]]; then
+    herdr workspace focus "$workspace_id" >/dev/null
 else
-    cd -- "$selected"
-    exec herdr
+    create_workspace
+    workspace_id=$(find_workspace)
+
+    if [[ -z $workspace_id ]]; then
+        echo "Could not find the newly created $WORKSPACE_LABEL workspace." >&2
+        exit 1
+    fi
+
+    create_vault_tabs
 fi
