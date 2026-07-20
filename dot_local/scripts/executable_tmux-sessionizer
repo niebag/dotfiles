@@ -41,7 +41,7 @@ create_session() {
     tmux send-keys   -t "$name:git" 'git status' Enter
     tmux new-window  -t "$name:" -c "$dir" -n app
     tmux new-window  -t "$name:" -c "$dir" -n zsh
-    tmux select-window -t "$name:app"
+    tmux select-window -t "$name:agent"
 }
 
 if [[ -z $TMUX ]] && [[ -z $tmux_running ]]; then
