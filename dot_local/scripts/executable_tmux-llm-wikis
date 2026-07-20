@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+SESSION="llm-wikis"
+WIKI_ROOT="/Users/niels/Library/Mobile Documents/iCloud~md~obsidian/Documents/llm-wikis"
+
+tmux_running=$(pgrep tmux)
+
+create_session() {
+    tmux new-session -ds "$SESSION" -c "$WIKI_ROOT/Personal" -n personal
+    tmux send-keys -t "$SESSION:personal" 'claude --allow-dangerously-skip-permissions' Enter
+
+    tmux new-window -t "$SESSION:" -c "$WIKI_ROOT/Notive" -n notive
+    tmux send-keys -t "$SESSION:notive" 'claude --allow-dangerously-skip-permissions' Enter
+
+    tmux new-window -t "$SESSION:" -c "$WIKI_ROOT/Resolph" -n resolph
+    tmux send-keys -t "$SESSION:resolph" 'claude --allow-dangerously-skip-permissions' Enter
+
+    tmux select-window -t "$SESSION:personal"
+}
+
+if [[ -z $TMUX ]] && [[ -z $tmux_running ]]; then
+    create_session
+    tmux attach -t "$SESSION"
+    exit 0
+fi
+
+if ! tmux has-session -t="$SESSION" 2>/dev/null; then
+    create_session
+fi
+
+if [[ -z $TMUX ]]; then
+    tmux attach -t "$SESSION"
+else
+    tmux switch-client -t "$SESSION"
+fi
