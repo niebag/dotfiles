@@ -1,60 +1,34 @@
 #!/usr/bin/env bash
 
-# Pick a repository and open its Herdr workspace.
+# Pick a repository and open its workspace in the default Herdr session.
 # New workspaces get agent, git, app, and zsh tabs.
 #
 # Usage:
-#   herdr-workspacer           # use the current or default session
-#   herdr-workspacer work      # use the named session when outside Herdr
+#   herdr-workspacer
 
 set -euo pipefail
-
-if [[ $# -gt 1 ]]; then
-    echo "usage: herdr-workspacer [session-name]" >&2
-    exit 2
-fi
-
-session_name=${1:-}
-
-if [[ -n ${HERDR_PANE_ID:-} && -n $session_name ]]; then
-    echo "Named Herdr sessions cannot be switched from inside a Herdr pane." >&2
-    exit 2
-fi
 
 die() {
     echo "$*" >&2
     exit 1
 }
 
-herdr_cmd() {
-    if [[ -n $session_name ]]; then
-        herdr --session "$session_name" "$@"
-    else
-        herdr "$@"
-    fi
-}
-
 server_running() {
-    herdr_cmd status server 2>/dev/null | rg -qx 'status: running'
+    herdr status server 2>/dev/null | rg -qx 'status: running'
 }
 
 ensure_server() {
     local attempt
 
     server_running && return
-
-    if [[ -n $session_name ]]; then
-        nohup herdr --session "$session_name" server >/dev/null 2>&1 &
-    else
-        nohup herdr server >/dev/null 2>&1 &
-    fi
+    nohup herdr server >/dev/null 2>&1 &
 
     for attempt in {1..50}; do
         server_running && return
         sleep 0.1
     done
 
-    die "Could not start the Herdr session: ${session_name:-default}"
+    die "Could not start the default Herdr session."
 }
 
 select_workspace() {
@@ -65,7 +39,7 @@ select_workspace() {
 }
 
 workspace_id() {
-    herdr_cmd workspace list |
+    herdr workspace list |
         jq -r --arg label "$workspace_label" '
             first(
                 (.result.workspaces // .workspaces // [])[]? |
@@ -78,7 +52,7 @@ workspace_id() {
 tab_id() {
     local label=$1
 
-    herdr_cmd tab list --workspace "$workspace_id" |
+    herdr tab list --workspace "$workspace_id" |
         jq -r --arg label "$label" '
             first(
                 (.result.tabs // .tabs // [])[]? |
@@ -92,7 +66,7 @@ run_in_tab() {
     local tab_id=$1 command=$2 pane_id
 
     pane_id="$(
-        herdr_cmd pane list --workspace "$workspace_id" |
+        herdr pane list --workspace "$workspace_id" |
             jq -r --arg tab_id "$tab_id" '
                 first(
                     (.result.panes // .panes // [])[]? |
@@ -103,18 +77,18 @@ run_in_tab() {
     )"
     [[ -n $pane_id ]] || die "Could not find a pane for tab: $tab_id"
 
-    herdr_cmd pane run "$pane_id" "$command" >/dev/null
+    herdr pane run "$pane_id" "$command" >/dev/null
 }
 
 create_workspace() {
     local agent_tab_id git_tab_id agent
 
-    herdr_cmd workspace create --cwd "$selected" --label "$workspace_label" --focus >/dev/null
+    herdr workspace create --cwd "$selected" --label "$workspace_label" --focus >/dev/null
     workspace_id=$(workspace_id)
     [[ -n $workspace_id ]] || die "Could not find the newly created $workspace_label workspace."
 
     agent_tab_id="$(
-        herdr_cmd tab list --workspace "$workspace_id" |
+        herdr tab list --workspace "$workspace_id" |
             jq -r 'first((.result.tabs // .tabs // [])[]? | .tab_id) // empty'
     )"
     [[ -n $agent_tab_id ]] || die "Could not find the initial workspace tab."
@@ -124,17 +98,17 @@ create_workspace() {
         *) agent='codex -a on-request -s workspace-write' ;;
     esac
 
-    herdr_cmd tab rename "$agent_tab_id" agent >/dev/null
+    herdr tab rename "$agent_tab_id" agent >/dev/null
     run_in_tab "$agent_tab_id" "$agent"
 
-    herdr_cmd tab create --workspace "$workspace_id" --cwd "$selected" --label git --no-focus >/dev/null
+    herdr tab create --workspace "$workspace_id" --cwd "$selected" --label git --no-focus >/dev/null
     git_tab_id=$(tab_id git)
     [[ -n $git_tab_id ]] || die "Could not find the git tab."
     run_in_tab "$git_tab_id" 'git status'
 
-    herdr_cmd tab create --workspace "$workspace_id" --cwd "$selected" --label app --no-focus >/dev/null
-    herdr_cmd tab create --workspace "$workspace_id" --cwd "$selected" --label zsh --no-focus >/dev/null
-    herdr_cmd tab focus "$agent_tab_id" >/dev/null
+    herdr tab create --workspace "$workspace_id" --cwd "$selected" --label app --no-focus >/dev/null
+    herdr tab create --workspace "$workspace_id" --cwd "$selected" --label zsh --no-focus >/dev/null
+    herdr tab focus "$agent_tab_id" >/dev/null
 }
 
 selected=$(select_workspace) || exit 0
@@ -149,14 +123,11 @@ fi
 
 workspace_id=$(workspace_id)
 if [[ -n $workspace_id ]]; then
-    herdr_cmd workspace focus "$workspace_id" >/dev/null
+    herdr workspace focus "$workspace_id" >/dev/null
 else
     create_workspace
 fi
 
 if [[ -z ${HERDR_PANE_ID:-} ]]; then
-    if [[ -n $session_name ]]; then
-        exec herdr session attach "$session_name"
-    fi
     exec herdr
 fi
