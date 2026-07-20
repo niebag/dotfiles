@@ -1,133 +1,93 @@
 #!/usr/bin/env bash
 
-# Pick a repository and open its workspace in the default Herdr session.
-# New workspaces get agent, git, app, and zsh tabs.
+# Pick a repository and create or focus its Herdr workspace.
+# New workspaces include agent, git, app, and zsh tabs.
 #
 # Usage:
 #   herdr-workspacer
 
-set -euo pipefail
+selected=$( {
+    find ~/personal -mindepth 1 -maxdepth 1 -type d
+    find ~/notive ~/resolph -mindepth 2 -maxdepth 2 -type d
+} | fzf ) || exit 0
 
-die() {
-    echo "$*" >&2
-    exit 1
-}
+[[ -n $selected ]] || exit 0
+selected="$(cd -- "$selected" && pwd -P)" || exit 1
+workspace_label="$(basename "$(dirname "$selected")")/$(basename "$selected")"
 
-server_running() {
-    herdr status server 2>/dev/null | rg -qx 'status: running'
-}
-
-ensure_server() {
-    local attempt
-
-    server_running && return
+if [[ -z ${HERDR_PANE_ID:-} ]] && ! herdr status server 2>/dev/null | rg -qx 'status: running'; then
     nohup herdr server >/dev/null 2>&1 &
-
-    for attempt in {1..50}; do
-        server_running && return
+    for _ in {1..50}; do
+        herdr status server 2>/dev/null | rg -qx 'status: running' && break
         sleep 0.1
     done
+    herdr status server 2>/dev/null | rg -qx 'status: running' || exit 1
+fi
 
-    die "Could not start the default Herdr session."
-}
-
-select_workspace() {
-    {
-        find ~/personal -mindepth 1 -maxdepth 1 -type d
-        find ~/notive ~/resolph -mindepth 2 -maxdepth 2 -type d
-    } | fzf
-}
-
-workspace_id() {
-    herdr workspace list |
-        jq -r --arg label "$workspace_label" '
-            first(
-                (.result.workspaces // .workspaces // [])[]? |
-                select(.label == $label or .workspace.label == $label) |
-                (.workspace_id // .workspace.workspace_id // empty)
-            ) // empty
-        '
-}
+workspace_id=$(herdr workspace list | jq -r --arg label "$workspace_label" '
+    first(
+        (.result.workspaces // .workspaces // [])[]? |
+        select(.label == $label or .workspace.label == $label) |
+        (.workspace_id // .workspace.workspace_id)
+    ) // empty
+')
 
 tab_id() {
-    local label=$1
-
-    herdr tab list --workspace "$workspace_id" |
-        jq -r --arg label "$label" '
-            first(
-                (.result.tabs // .tabs // [])[]? |
-                select(.label == $label) |
-                .tab_id
-            ) // empty
-        '
+    herdr tab list --workspace "$workspace_id" | jq -r --arg label "$1" '
+        first(
+            (.result.tabs // .tabs // [])[]? |
+            select(.label == $label) |
+            .tab_id
+        ) // empty
+    '
 }
 
 run_in_tab() {
-    local tab_id=$1 command=$2 pane_id
+    local pane_id
 
-    pane_id="$(
-        herdr pane list --workspace "$workspace_id" |
-            jq -r --arg tab_id "$tab_id" '
-                first(
-                    (.result.panes // .panes // [])[]? |
-                    select(.tab_id == $tab_id) |
-                    .pane_id
-                ) // empty
-            '
-    )"
-    [[ -n $pane_id ]] || die "Could not find a pane for tab: $tab_id"
-
-    herdr pane run "$pane_id" "$command" >/dev/null
+    pane_id=$(herdr pane list --workspace "$workspace_id" | jq -r --arg tab_id "$1" '
+        first(
+            (.result.panes // .panes // [])[]? |
+            select(.tab_id == $tab_id) |
+            .pane_id
+        ) // empty
+    ')
+    [[ -n $pane_id ]] || return 1
+    herdr pane run "$pane_id" "$2" >/dev/null
 }
 
-create_workspace() {
-    local agent_tab_id git_tab_id agent
-
+if [[ -z $workspace_id ]]; then
     herdr workspace create --cwd "$selected" --label "$workspace_label" --focus >/dev/null
-    workspace_id=$(workspace_id)
-    [[ -n $workspace_id ]] || die "Could not find the newly created $workspace_label workspace."
+    workspace_id=$(herdr workspace list | jq -r --arg label "$workspace_label" '
+        first(
+            (.result.workspaces // .workspaces // [])[]? |
+            select(.label == $label or .workspace.label == $label) |
+            (.workspace_id // .workspace.workspace_id)
+        ) // empty
+    ')
+    [[ -n $workspace_id ]] || exit 1
 
-    agent_tab_id="$(
-        herdr tab list --workspace "$workspace_id" |
-            jq -r 'first((.result.tabs // .tabs // [])[]? | .tab_id) // empty'
-    )"
-    [[ -n $agent_tab_id ]] || die "Could not find the initial workspace tab."
+    agent_tab=$(herdr tab list --workspace "$workspace_id" | jq -r '
+        first((.result.tabs // .tabs // [])[]? | .tab_id) // empty
+    ')
+    [[ -n $agent_tab ]] || exit 1
 
     case "$selected" in
         "$HOME/notive"/*) agent='claude --permission-mode auto' ;;
         *) agent='codex -a on-request -s workspace-write' ;;
     esac
 
-    herdr tab rename "$agent_tab_id" agent >/dev/null
-    run_in_tab "$agent_tab_id" "$agent"
+    herdr tab rename "$agent_tab" agent >/dev/null
+    run_in_tab "$agent_tab" "$agent" || exit 1
 
     herdr tab create --workspace "$workspace_id" --cwd "$selected" --label git --no-focus >/dev/null
-    git_tab_id=$(tab_id git)
-    [[ -n $git_tab_id ]] || die "Could not find the git tab."
-    run_in_tab "$git_tab_id" 'git status'
+    run_in_tab "$(tab_id git)" 'git status' || exit 1
 
     herdr tab create --workspace "$workspace_id" --cwd "$selected" --label app --no-focus >/dev/null
     herdr tab create --workspace "$workspace_id" --cwd "$selected" --label zsh --no-focus >/dev/null
-    herdr tab focus "$agent_tab_id" >/dev/null
-}
-
-selected=$(select_workspace) || exit 0
-[[ -n $selected ]] || exit 0
-selected="$(cd -- "$selected" && pwd -P)"
-workspace_label="$(basename "$(dirname "$selected")")/$(basename "$selected")"
-workspace_id=""
-
-if [[ -z ${HERDR_PANE_ID:-} ]]; then
-    ensure_server
-fi
-
-workspace_id=$(workspace_id)
-if [[ -n $workspace_id ]]; then
-    herdr workspace focus "$workspace_id" >/dev/null
+    herdr tab focus "$agent_tab" >/dev/null
 else
-    create_workspace
+    herdr workspace focus "$workspace_id" >/dev/null
 fi
 
-if [[ -z ${HERDR_PANE_ID:-} ]]; then
-    exec herdr
-fi
+[[ -n ${HERDR_PANE_ID:-} ]] || exec herdr
