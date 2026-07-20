@@ -151,6 +151,8 @@ else
         exec herdr --session "$session_name"
     fi
 
-    cd -- "$selected"
+    # The default Herdr server persists outside the app, so create or focus the
+    # workspace before attaching to it.
+    focus_workspace
     exec herdr
 fi
