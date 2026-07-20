@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Pick a repository and create or switch to its tmux session. New sessions
-# include windows for the app, Git, Zsh, Claude, and Cursor.
+# include windows for an agent, Git, the app, and Zsh.
 #
 # Usage:
 #   tmux-sessionizer           # choose a repository with fzf
@@ -20,16 +20,27 @@ fi
 selected_name="$(basename "$(dirname "$selected")")/$(basename "$selected" | tr . _)"
 tmux_running=$(pgrep tmux)
 
+agent_command() {
+    local dir=$1
+
+    case "$dir" in
+        "$HOME/notive"/*)
+            printf '%s\n' 'claude --permission-mode auto'
+            ;;
+        *)
+            printf '%s\n' 'codex -a on-request -s workspace-write'
+            ;;
+    esac
+}
+
 create_session() {
     local name=$1 dir=$2
-    tmux new-session -ds "$name" -c "$dir" -n app
+    tmux new-session -ds "$name" -c "$dir" -n agent
+    tmux send-keys   -t "$name:agent" "$(agent_command "$dir")" Enter
     tmux new-window  -t "$name:" -c "$dir" -n git
     tmux send-keys   -t "$name:git" 'git status' Enter
+    tmux new-window  -t "$name:" -c "$dir" -n app
     tmux new-window  -t "$name:" -c "$dir" -n zsh
-    tmux new-window  -t "$name:" -c "$dir" -n claude
-    tmux send-keys   -t "$name:claude" 'claude --allow-dangerously-skip-permissions' Enter
-    tmux new-window  -t "$name:" -c "$dir" -n cursor
-    tmux send-keys   -t "$name:cursor" 'cursor agent --yolo' Enter
     tmux select-window -t "$name:app"
 }
 
