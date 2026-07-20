@@ -27,8 +27,16 @@ select_workspace() {
     } | fzf
 }
 
+herdr_for_session() {
+    if [[ -n $session_name ]]; then
+        herdr --session "$session_name" "$@"
+    else
+        herdr "$@"
+    fi
+}
+
 create_workspace() {
-    herdr workspace create --cwd "$selected" --label "$workspace_label" --focus >/dev/null
+    herdr_for_session workspace create --cwd "$selected" --label "$workspace_label" --focus >/dev/null
 
     workspace_id=$(find_workspace)
     if [[ -z $workspace_id ]]; then
@@ -40,7 +48,7 @@ create_workspace() {
 }
 
 find_workspace() {
-    herdr workspace list |
+    herdr_for_session workspace list |
         jq -r --arg cwd "$selected" --arg label "$workspace_label" '
             (.result.workspaces // .workspaces // [])[]? |
             select(
@@ -56,7 +64,7 @@ find_workspace() {
 find_tab() {
     local tab_label=$1
 
-    herdr tab list --workspace "$workspace_id" |
+    herdr_for_session tab list --workspace "$workspace_id" |
         jq -r --arg label "$tab_label" '
             (.result.tabs // .tabs // [])[]? |
             select(.label == $label) |
@@ -69,7 +77,7 @@ run_command() {
     local tab_id=$1 command=$2 pane_id
 
     pane_id="$(
-        herdr pane list --workspace "$workspace_id" |
+        herdr_for_session pane list --workspace "$workspace_id" |
             jq -r --arg tab_id "$tab_id" '
                 (.result.panes // .panes // [])[]? |
                 select(.tab_id == $tab_id) |
@@ -79,7 +87,7 @@ run_command() {
     )"
 
     if [[ -n $pane_id ]]; then
-        herdr pane run "$pane_id" "$command" >/dev/null
+        herdr_for_session pane run "$pane_id" "$command" >/dev/null
     fi
 }
 
@@ -98,26 +106,26 @@ create_workspace_tabs() {
     local agent_tab_id git_tab_id app_tab_id
 
     agent_tab_id="$(
-        herdr tab list --workspace "$workspace_id" |
+        herdr_for_session tab list --workspace "$workspace_id" |
             jq -r '(.result.tabs // .tabs // [])[]? | .tab_id // empty' |
             head -n 1
     )"
     if [[ -n $agent_tab_id ]]; then
-        herdr tab rename "$agent_tab_id" agent >/dev/null
+        herdr_for_session tab rename "$agent_tab_id" agent >/dev/null
         run_command "$agent_tab_id" "$(agent_command)"
     fi
 
-    herdr tab create --workspace "$workspace_id" --cwd "$selected" --label git --no-focus >/dev/null
+    herdr_for_session tab create --workspace "$workspace_id" --cwd "$selected" --label git --no-focus >/dev/null
     git_tab_id=$(find_tab git)
     run_command "$git_tab_id" 'git status'
 
-    herdr tab create --workspace "$workspace_id" --cwd "$selected" --label app --no-focus >/dev/null
+    herdr_for_session tab create --workspace "$workspace_id" --cwd "$selected" --label app --no-focus >/dev/null
     app_tab_id=$(find_tab app)
 
-    herdr tab create --workspace "$workspace_id" --cwd "$selected" --label zsh --no-focus >/dev/null
+    herdr_for_session tab create --workspace "$workspace_id" --cwd "$selected" --label zsh --no-focus >/dev/null
 
     if [[ -n $agent_tab_id ]]; then
-        herdr tab focus "$agent_tab_id" >/dev/null
+        herdr_for_session tab focus "$agent_tab_id" >/dev/null
     fi
 }
 
@@ -125,7 +133,7 @@ focus_workspace() {
     workspace_id="$(find_workspace)"
 
     if [[ -n $workspace_id ]]; then
-        herdr workspace focus "$workspace_id" >/dev/null
+        herdr_for_session workspace focus "$workspace_id" >/dev/null
     else
         create_workspace
     fi
@@ -146,13 +154,11 @@ workspace_label="$(basename "$(dirname "$selected")")/$(basename "$selected")"
 if [[ -n ${HERDR_PANE_ID:-} ]]; then
     focus_workspace
 else
+    # Herdr servers persist outside the app, so create or focus the workspace
+    # before attaching to the selected session.
+    focus_workspace
     if [[ -n $session_name ]]; then
-        cd -- "$selected"
         exec herdr --session "$session_name"
     fi
-
-    # The default Herdr server persists outside the app, so create or focus the
-    # workspace before attaching to it.
-    focus_workspace
     exec herdr
 fi
