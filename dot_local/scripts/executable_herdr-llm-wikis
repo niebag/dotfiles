@@ -70,7 +70,7 @@ create_vault_tabs() {
 
     if [[ -n $personal_tab_id ]]; then
         herdr tab rename "$personal_tab_id" personal >/dev/null
-        start_agent "$personal_tab_id" 'codex -a on-request'
+        start_agent "$personal_tab_id" 'codex -a on-request -s workspace-write'
     fi
 
     herdr tab create --workspace "$workspace_id" --cwd "$WIKI_ROOT/Notive" --label notive --no-focus >/dev/null
@@ -79,7 +79,7 @@ create_vault_tabs() {
 
     herdr tab create --workspace "$workspace_id" --cwd "$WIKI_ROOT/Resolph" --label resolph --no-focus >/dev/null
     resolph_tab_id=$(find_tab resolph)
-    start_agent "$resolph_tab_id" 'codex -a on-request'
+    start_agent "$resolph_tab_id" 'codex -a on-request -s workspace-write'
 }
 
 workspace_id=$(find_workspace)
