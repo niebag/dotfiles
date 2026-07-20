@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+
+# Pick an LLM wiki vault and focus its workspace in the default Herdr session.
+# Each vault remains isolated in its own workspace.
+#
+# Usage:
+#   herdr-llm-wikis
+
+WIKI_ROOT="/Users/niels/Library/Mobile Documents/iCloud~md~obsidian/Documents"
+
+select_workspace() {
+    printf '%s\n' "$WIKI_ROOT"/{Personal,Notive,Resolph} | fzf
+}
+
+create_workspace() {
+    herdr workspace create --cwd "$selected" --label "$workspace_label" --focus >/dev/null
+}
+
+focus_workspace() {
+    local workspace_id
+
+    workspace_id="$(
+        herdr workspace list |
+            jq -r --arg cwd "$selected" --arg label "$workspace_label" '
+                (.result.workspaces // .workspaces // [])[]? |
+                select(
+                    .label == $label or
+                    .workspace.label == $label or
+                    (.root_pane.cwd? // .cwd? // "") == $cwd
+                ) |
+                (.workspace_id // .workspace.workspace_id // empty)
+            ' |
+            head -n 1
+    )"
+
+    if [[ -n $workspace_id ]]; then
+        herdr workspace focus "$workspace_id" >/dev/null
+    else
+        create_workspace
+    fi
+}
+
+selected=$(select_workspace)
+
+if [[ -z $selected ]]; then
+    exit 0
+fi
+
+# Use an absolute, resolved path, matching the cwd stored by Herdr.
+selected="$(cd -- "$selected" && pwd -P)" || exit 1
+workspace_label="$(basename "$(dirname "$selected")")/$(basename "$selected")"
+
+if [[ -n ${HERDR_PANE_ID:-} ]]; then
+    focus_workspace
+else
+    cd -- "$selected"
+    exec herdr
+fi
