@@ -4,12 +4,17 @@
 # New workspaces include agent, git, app, and zsh tabs.
 #
 # Usage:
-#   herdr-workspacer
+#   herdr-workspacer           # choose a repository with fzf
+#   herdr-workspacer <path>    # use the specified repository
 
-selected=$( {
-    find ~/personal -mindepth 1 -maxdepth 1 -type d
-    find ~/notive ~/resolph -mindepth 2 -maxdepth 2 -type d
-} | fzf ) || exit 0
+if [[ $# -eq 1 ]]; then
+    selected=$1
+else
+    selected=$( {
+        find ~/personal -mindepth 1 -maxdepth 1 -type d
+        find ~/notive ~/resolph -mindepth 2 -maxdepth 2 -type d
+    } | fzf ) || exit 0
+fi
 
 [[ -n $selected ]] || exit 0
 selected="$(cd -- "$selected" && pwd -P)" || exit 1
