@@ -35,23 +35,39 @@ herdr_for_session() {
     fi
 }
 
-ensure_named_session_server() {
+session_server_running() {
+    if [[ -n $session_name ]]; then
+        herdr --session "$session_name" status server 2>/dev/null | rg -q '^status: running$'
+    else
+        herdr status server 2>/dev/null | rg -q '^status: running$'
+    fi
+}
+
+start_session_server() {
+    if [[ -n $session_name ]]; then
+        nohup herdr --session "$session_name" server >/dev/null 2>&1 &
+    else
+        nohup herdr server >/dev/null 2>&1 &
+    fi
+}
+
+ensure_session_server() {
     local attempt
 
-    if [[ -z $session_name ]] || herdr --session "$session_name" status server 2>/dev/null | rg -q '^status: running$'; then
+    if session_server_running; then
         return
     fi
 
-    nohup herdr --session "$session_name" server >/dev/null 2>&1 &
+    start_session_server
 
     for attempt in {1..50}; do
-        if herdr --session "$session_name" status server 2>/dev/null | rg -q '^status: running$'; then
+        if session_server_running; then
             return
         fi
         sleep 0.1
     done
 
-    echo "Could not start the Herdr session: $session_name" >&2
+    echo "Could not start the Herdr session: ${session_name:-default}" >&2
     exit 1
 }
 
@@ -176,10 +192,10 @@ if [[ -n ${HERDR_PANE_ID:-} ]]; then
 else
     # Herdr servers persist outside the app, so create or focus the workspace
     # before attaching to the selected session.
-    ensure_named_session_server
+    ensure_session_server
     focus_workspace
     if [[ -n $session_name ]]; then
-        exec herdr --session "$session_name"
+        exec herdr session attach "$session_name"
     fi
     exec herdr
 fi
