@@ -116,8 +116,8 @@ create_workspace_tabs() {
 
     herdr tab create --workspace "$workspace_id" --cwd "$selected" --label zsh --no-focus >/dev/null
 
-    if [[ -n $app_tab_id ]]; then
-        herdr tab focus "$app_tab_id" >/dev/null
+    if [[ -n $agent_tab_id ]]; then
+        herdr tab focus "$agent_tab_id" >/dev/null
     fi
 }
 
