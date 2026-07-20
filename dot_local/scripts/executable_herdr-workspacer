@@ -83,31 +83,38 @@ run_command() {
     fi
 }
 
-create_workspace_tabs() {
-    local app_tab_id git_tab_id claude_tab_id cursor_tab_id
+agent_command() {
+    case "$selected" in
+        "$HOME/notive"/*)
+            printf '%s\n' 'claude --permission-mode auto'
+            ;;
+        *)
+            printf '%s\n' 'codex -a on-request -s workspace-write'
+            ;;
+    esac
+}
 
-    app_tab_id="$(
+create_workspace_tabs() {
+    local agent_tab_id git_tab_id app_tab_id
+
+    agent_tab_id="$(
         herdr tab list --workspace "$workspace_id" |
             jq -r '(.result.tabs // .tabs // [])[]? | .tab_id // empty' |
             head -n 1
     )"
-    if [[ -n $app_tab_id ]]; then
-        herdr tab rename "$app_tab_id" app >/dev/null
+    if [[ -n $agent_tab_id ]]; then
+        herdr tab rename "$agent_tab_id" agent >/dev/null
+        run_command "$agent_tab_id" "$(agent_command)"
     fi
 
     herdr tab create --workspace "$workspace_id" --cwd "$selected" --label git --no-focus >/dev/null
     git_tab_id=$(find_tab git)
     run_command "$git_tab_id" 'git status'
 
+    herdr tab create --workspace "$workspace_id" --cwd "$selected" --label app --no-focus >/dev/null
+    app_tab_id=$(find_tab app)
+
     herdr tab create --workspace "$workspace_id" --cwd "$selected" --label zsh --no-focus >/dev/null
-
-    herdr tab create --workspace "$workspace_id" --cwd "$selected" --label claude --no-focus >/dev/null
-    claude_tab_id=$(find_tab claude)
-    run_command "$claude_tab_id" 'claude --permission-mode auto'
-
-    herdr tab create --workspace "$workspace_id" --cwd "$selected" --label cursor --no-focus >/dev/null
-    cursor_tab_id=$(find_tab cursor)
-    run_command "$cursor_tab_id" 'cursor agent'
 
     if [[ -n $app_tab_id ]]; then
         herdr tab focus "$app_tab_id" >/dev/null
