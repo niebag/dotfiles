@@ -8,7 +8,12 @@
 # untouched. The SessionStart hook is intentionally NOT set here: herdr owns
 # it (see run_onchange_install-herdr-integrations.sh).
 #
+# Output matches herdr's serialization (sorted keys via -S, no trailing
+# newline) so the two tools don't ping-pong over formatting when herdr
+# rewrites the file.
+#
 # jq flags:
+#   -S            sort object keys (match herdr's output)
 #   -n            start from null, don't auto-read stdin
 #   --arg home    expose $home (rendered by chezmoi to the destination home dir)
 #   (input? // {}) read the existing file if present, else start from {}
@@ -20,7 +25,9 @@ if ! command -v jq >/dev/null 2>&1; then
   exit 0
 fi
 
-jq -n --arg home "{{ .chezmoi.homeDir }}" '
+# printf '%s' strips jq's trailing newline (command substitution drops it, and
+# printf adds none) to match herdr's newline-free output.
+printf '%s' "$(jq -S -n --arg home "{{ .chezmoi.homeDir }}" '
   (input? // {})
 
   | .attribution = {commit: "", pr: ""}
@@ -32,4 +39,4 @@ jq -n --arg home "{{ .chezmoi.homeDir }}" '
       type: "command",
       command: ("sh " + $home + "/.claude/statusline-command.sh")
     }
-'
+')"
