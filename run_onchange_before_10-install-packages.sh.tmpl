@@ -15,7 +15,7 @@ set -eu
 
 command -v brew >/dev/null 2>&1 || { echo "brew not found; skipping packages" >&2; exit 0; }
 
-brew bundle --no-lock --file=/dev/stdin <<'EOF'
+brew bundle install --file=/dev/stdin <<'EOF'
 {{ include "dot_Brewfile" }}
 EOF
 {{- end }}
