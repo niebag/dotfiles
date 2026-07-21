@@ -15,7 +15,7 @@
 # jq flags:
 #   -S            sort object keys (match herdr's output)
 #   -n            start from null, don't auto-read stdin
-#   --arg home    expose $home (rendered by chezmoi to the destination home dir)
+#   --arg home    expose $home (the shell's home directory at run time)
 #   (input? // {}) read the existing file if present, else start from {}
 
 # If jq is somehow unavailable, pass the file through untouched rather than
@@ -27,7 +27,7 @@ fi
 
 # printf '%s' strips jq's trailing newline (command substitution drops it, and
 # printf adds none) to match herdr's newline-free output.
-printf '%s' "$(jq -S -n --arg home "{{ .chezmoi.homeDir }}" '
+printf '%s' "$(jq -S -n --arg home "$HOME" '
   (input? // {})
 
   | .attribution = {commit: "", pr: ""}
