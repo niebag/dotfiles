@@ -3,9 +3,21 @@
 #   brew bundle dump --global --force
 #   brew bundle check --global
 
-# Agent multiplexer; owns the Claude/Codex agent-state hooks.
+# Agent multiplexer; owns the Claude/Codex agent-state hooks. Also driven by
+# the dot_local/scripts/*herdr* helpers.
 brew "herdr"
 
-# Required by chezmoi modify_ scripts:
-brew "jq"       # dot_claude/modify_settings.json.tmpl
-brew "python"   # dot_codex/modify_private_config.toml (builds a tomlkit venv)
+# JSON processor: chezmoi modify_settings.json.tmpl + the herdr helper scripts.
+brew "jq"
+
+# Codex config modify_ script builds a tomlkit venv with this.
+brew "python"
+
+# Terminal multiplexer: dot_local/scripts/tmux-sessionizer, tmux-llm-wikis.
+brew "tmux"
+
+# Fuzzy finder: tmux-sessionizer, herdr-workspacer.
+brew "fzf"
+
+# ripgrep (rg): herdr-workspacer.
+brew "ripgrep"
