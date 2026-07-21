@@ -7,7 +7,7 @@
 #   herdr-llm-wikis
 
 WORKSPACE_LABEL="llm-wikis"
-WIKI_ROOT="/Users/niels/Library/Mobile Documents/iCloud~md~obsidian/Documents"
+WIKI_ROOT="$HOME/Library/Mobile Documents/iCloud~md~obsidian/Documents"
 
 find_workspace() {
     local workspace_id
