@@ -1,0 +1,11 @@
+# Global Brewfile, applied by run_onchange_before_10-install-packages.sh.tmpl
+# during `chezmoi apply`. Regenerate/inspect with:
+#   brew bundle dump --global --force
+#   brew bundle check --global
+
+# Agent multiplexer; owns the Claude/Codex agent-state hooks.
+brew "herdr"
+
+# Required by chezmoi modify_ scripts:
+brew "jq"       # dot_claude/modify_settings.json.tmpl
+brew "python"   # dot_codex/modify_private_config.toml (builds a tomlkit venv)
