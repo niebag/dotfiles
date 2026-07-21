@@ -1,0 +1,39 @@
+#!/bin/sh
+
+# chezmoi modify_ script for ~/.claude/settings.json.
+#
+# The current target file is piped in on stdin (empty on a fresh machine).
+# This script only sets the "stable" keys below; everything else in the file
+# (model, effortLevel, enabledPlugins, ...) passes straight through untouched.
+#
+# jq flags:
+#   -n            start from null, don't auto-read stdin
+#   --arg home    expose $home (rendered by chezmoi to the destination home dir)
+#   (input? // {}) read the existing file if present, else start from {}
+
+jq -n --arg home "{{ .chezmoi.homeDir }}" '
+  (input? // {})
+
+  | .attribution = {commit: "", pr: ""}
+  | .permissions.defaultMode = "auto"
+  | .tui = "fullscreen"
+  | .theme = "auto"
+
+  | .statusLine = {
+      type: "command",
+      command: ("sh " + $home + "/.claude/statusline-command.sh")
+    }
+
+  | .hooks.SessionStart = [
+      {
+        matcher: "*",
+        hooks: [
+          {
+            type: "command",
+            command: ("bash \"" + $home + "/.claude/hooks/herdr-agent-state.sh\" session"),
+            timeout: 10
+          }
+        ]
+      }
+    ]
+'
