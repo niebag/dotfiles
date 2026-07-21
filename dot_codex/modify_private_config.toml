@@ -1,0 +1,55 @@
+#!/bin/sh
+
+# chezmoi modify_ script for ~/.codex/config.toml.
+#
+# Codex keeps a lot of machine-local / volatile state in this one file
+# (project trust entries, hook-state hashes, MCP server paths, marketplace
+# revisions, TUI counters). We only want to enforce a few portable prefs and
+# leave everything else exactly as Codex wrote it.
+#
+# jq can't do TOML, and dasel/taplo either mangle the file or can't set values,
+# so we use tomlkit (style-preserving) from a small dedicated venv that this
+# script bootstraps on first run. If Python/tomlkit are unavailable the script
+# passes the file through untouched so it can never corrupt config.toml.
+
+set -eu
+
+# Capture stdin (the current config.toml) BEFORE bootstrapping: venv/pip would
+# otherwise drain it, leaving Python to parse an empty document.
+INPUT="$(mktemp "${TMPDIR:-/tmp}/chezmoi-codex-config.XXXXXX")"
+trap 'rm -f "$INPUT"' EXIT HUP INT TERM
+cat > "$INPUT"
+
+VENV="$HOME/.cache/dotfiles/venv"
+PY="$VENV/bin/python3"
+
+if [ ! -x "$PY" ]; then
+  python3 -m venv "$VENV" </dev/null >/dev/null 2>&1 \
+    && "$VENV/bin/pip" install -q tomlkit </dev/null >/dev/null 2>&1 \
+    || true
+fi
+
+if [ ! -x "$PY" ] || ! "$PY" -c 'import tomlkit' >/dev/null 2>&1; then
+  cat "$INPUT"
+  exit 0
+fi
+
+"$PY" - "$INPUT" <<'PYEOF'
+import sys
+import tomlkit
+
+with open(sys.argv[1]) as f:
+    doc = tomlkit.parse(f.read())
+
+doc["approval_policy"] = "on-request"
+doc["sandbox_mode"] = "workspace-write"
+
+features = doc.get("features")
+if features is None:
+    features = tomlkit.table()
+    doc["features"] = features
+features["hooks"] = True
+features["js_repl"] = False
+
+sys.stdout.write(tomlkit.dumps(doc))
+PYEOF
