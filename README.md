@@ -29,7 +29,7 @@ chezmoi init --apply https://github.com/niebag/dotfiles.git
 - **Instructions:** `dot_codex/AGENTS.md` is the single instruction file;
   `dot_claude/symlink_CLAUDE.md` makes `~/.claude/CLAUDE.md` a symlink to it, so
   both harnesses share one source with no duplication.
-- **Personal skills** (`ingest`, `lint`, `query`, `henny-review`): canonical in
+- **Personal skills** (`ingest`, `lint`, `query`): canonical in
   `~/.agents/skills` (read directly by Codex and Cursor); Claude gets per-skill
   symlinks under `~/.claude/skills`.
 - **General skills:** `run_onchange_after_30-install-niebag-skills.sh` runs
