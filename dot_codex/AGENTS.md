@@ -1,6 +1,6 @@
 ## LLM-Wiki
 Kenniskluis parent:
-/Users/niels/Library/Mobile Documents/iCloud~md~obsidian/Documents/llm-wikis/
+~/Library/Mobile Documents/iCloud~md~obsidian/Documents/llm-wikis/
 
 Drie losse vaults, elk een eigen root en eigen CLAUDE.md:
 - llm-wikis/Notive/   — Notive-werkcontext
