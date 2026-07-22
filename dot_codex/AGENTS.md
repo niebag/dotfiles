@@ -1,11 +1,11 @@
 ## LLM-Wiki
 Kenniskluis parent:
-~/Library/Mobile Documents/iCloud~md~obsidian/Documents/llm-wikis/
+~/Library/Mobile Documents/iCloud~md~obsidian/Documents/
 
 Drie losse vaults, elk een eigen root en eigen CLAUDE.md:
-- llm-wikis/Notive/   — Notive-werkcontext
-- llm-wikis/Resolph/  — Resolph-werkcontext
-- llm-wikis/Personal/ — persoonlijke context
+- Notive/   — Notive-werkcontext
+- Resolph/  — Resolph-werkcontext
+- Personal/ — persoonlijke context
 
 Elke vault is volledig geïsoleerd: geen cross-vault links, geen gedeelde data.
 
