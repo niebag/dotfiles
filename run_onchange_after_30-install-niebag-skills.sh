@@ -2,10 +2,10 @@
 
 # Install the general-purpose skills from niebag/skills for every harness.
 #
-# - Codex & Cursor read ~/.agents/skills, so the skills CLI (https://skills.sh)
-#   installs there. The CLI maps agents to their dirs automatically; we do NOT
-#   target claude-code with it (Claude gets these via the plugin below, so that
-#   would duplicate them).
+# - Codex, Cursor & Pi read their skills from locations managed by the skills
+#   CLI (https://skills.sh), so install them together. The CLI maps agents to
+#   their dirs automatically; we do NOT target claude-code with it (Claude gets
+#   these via the plugin below, so that would duplicate them).
 # - Claude Code gets them via its plugin marketplace instead: add + install the
 #   niebag-skills plugin, then refresh the marketplace and update the plugin to
 #   the latest revision (install alone is idempotent and never upgrades). All
@@ -18,9 +18,9 @@
 set -eu
 
 if command -v npx >/dev/null 2>&1; then
-  npx -y skills add niebag/skills -g -y -a codex cursor
+  npx -y skills add niebag/skills -g -y -a codex cursor pi
 else
-  echo "npx not found; skipping niebag/skills install for Codex/Cursor" >&2
+  echo "npx not found; skipping niebag/skills install for Codex/Cursor/Pi" >&2
 fi
 
 if command -v claude >/dev/null 2>&1; then
