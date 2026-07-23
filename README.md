@@ -1,38 +1,24 @@
 # dotfiles
 
-Personal dotfiles, managed with [chezmoi](https://www.chezmoi.io/).
+Dotfiles managed with [chezmoi](https://www.chezmoi.io/).
 
-## Install on a new machine
+## Install
 
-Install [chezmoi](https://www.chezmoi.io/install/), then initialize and apply these dotfiles:
+Install [chezmoi](https://www.chezmoi.io/install/) and [Homebrew](https://brew.sh/), then initialize and apply:
 
 ```sh
 chezmoi init --apply https://github.com/niebag/dotfiles.git
 ```
 
-## Requirements & what `apply` does (macOS)
+On macOS, `chezmoi apply` installs the Homebrew tools in the Brewfile and the
+Herdr integrations for Claude Code and Codex.
 
-- Requires [Homebrew](https://brew.sh/). On `apply` (before writing files),
-  `run_onchange_before_10-install-packages.sh` runs `brew bundle` from
-  `dot_Brewfile` to install the tools the dotfiles depend on (herdr, jq,
-  python, tmux, fzf, ripgrep).
-- `run_onchange_install-herdr-integrations.sh` then runs
-  `herdr integration install` for Claude Code and Codex (herdr owns those hooks,
-  so they are not tracked here). It re-runs automatically on herdr upgrades.
-- `dot_codex/modify_private_config.toml` creates a small Python venv at
-  `~/.cache/dotfiles/venv` (with `tomlkit`) to edit `~/.codex/config.toml`
-  in place.
-- Non-macOS: the Homebrew steps no-op; install the tools yourself.
+## Managed configuration
 
-## AI harness (Claude Code / Codex / Cursor)
+- Homebrew tools: `herdr`, `jq`, `python`, `tmux`, `fzf`, `ripgrep`, `btop`,
+  `chezmoi`, `doctl`, `gh`, `glab`, `hunk`, `k9s`, `mole`, and `terraform`.
+- Claude Code and Codex instructions and configuration.
+- Agent skills.
+- tmux, Ghostty, and helper scripts for terminal workspaces.
 
-- **Instructions:** `dot_codex/AGENTS.md` is the single instruction file;
-  `dot_claude/symlink_CLAUDE.md` makes `~/.claude/CLAUDE.md` a symlink to it, so
-  both harnesses share one source with no duplication.
-- **Personal skills** (`ingest`, `lint`, `query`): canonical in
-  `~/.agents/skills` (read directly by Codex and Cursor); Claude gets per-skill
-  symlinks under `~/.claude/skills`.
-- **General skills:** `run_onchange_after_30-install-niebag-skills.sh` runs
-  `npx skills add niebag/skills` into `~/.agents/skills` (Codex/Cursor); Claude
-  gets those via its `niebag-skills` plugin. Requires `node`/`npx` (via nvm);
-  the step is skipped if `npx` is absent.
+For details, see the relevant files in this repository.
