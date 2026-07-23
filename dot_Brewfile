@@ -21,3 +21,19 @@ brew "fzf"
 
 # ripgrep (rg): herdr-workspacer.
 brew "ripgrep"
+
+# Third-party formula sources. `trusted: true` below permits their formulae on
+# a freshly bootstrapped machine.
+tap "derailed/k9s"
+tap "hashicorp/tap"
+
+# CLI tools to keep available on every managed machine.
+brew "btop"
+brew "chezmoi"
+brew "doctl"
+brew "gh"
+brew "glab"
+brew "hunk"
+brew "derailed/k9s/k9s", trusted: true
+brew "mole"
+brew "hashicorp/tap/terraform", trusted: true
