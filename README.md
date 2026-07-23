@@ -17,7 +17,7 @@ Herdr integrations for Claude Code and Codex.
 
 - Homebrew tools: `herdr`, `jq`, `python`, `tmux`, `fzf`, `ripgrep`, `btop`,
   `chezmoi`, `doctl`, `gh`, `glab`, `hunk`, `k9s`, `mole`, and `terraform`.
-- Claude Code and Codex instructions and configuration.
+- Claude Code, Codex, and Pi instructions and configuration.
 - Agent skills.
 - tmux, Ghostty, and helper scripts for terminal workspaces.
 
