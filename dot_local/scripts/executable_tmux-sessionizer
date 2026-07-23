@@ -28,7 +28,7 @@ agent_command() {
             printf '%s\n' 'claude --permission-mode auto'
             ;;
         *)
-            printf '%s\n' 'codex -a on-request -s workspace-write'
+            printf '%s\n' 'codex -a never -s workspace-write'
             ;;
     esac
 }

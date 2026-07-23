@@ -41,7 +41,7 @@ import tomlkit
 with open(sys.argv[1]) as f:
     doc = tomlkit.parse(f.read())
 
-doc["approval_policy"] = "on-request"
+doc["approval_policy"] = "never"
 doc["sandbox_mode"] = "workspace-write"
 
 features = doc.get("features")

@@ -79,7 +79,7 @@ if [[ -z $workspace_id ]]; then
 
     case "$selected" in
         "$HOME/notive"/*) agent='claude --permission-mode auto' ;;
-        *) agent='codex -a on-request -s workspace-write' ;;
+        *) agent='codex -a never -s workspace-write' ;;
     esac
 
     herdr tab rename "$agent_tab" agent >/dev/null
