@@ -1,0 +1,26 @@
+#!/bin/sh
+
+# chezmoi modify_ script for ~/.pi/agent/settings.json.
+#
+# Pi updates model defaults and changelog state itself. Keep those local, and
+# only manage the portable UI preference and scoped model list here.
+
+# A modify_ script must never replace a settings file with an empty document.
+if ! command -v jq >/dev/null 2>&1; then
+  cat
+  exit 0
+fi
+
+# Output is stable so repeated chezmoi applies do not cause formatting churn.
+printf '%s' "$(jq -S -n '
+  (input? // {})
+
+  | .theme = "dark"
+  | .enabledModels = [
+      "anthropic/claude-fable-5",
+      "openai-codex/gpt-5.6-terra",
+      "openai-codex/gpt-5.6-sol",
+      "anthropic/claude-sonnet-5",
+      "anthropic/claude-opus-4-8"
+    ]
+')"
