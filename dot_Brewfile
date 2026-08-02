@@ -1,39 +1,25 @@
-# Global Brewfile, applied by run_onchange_before_10-install-packages.sh.tmpl
-# during `chezmoi apply`. Regenerate/inspect with:
-#   brew bundle dump --global --force
-#   brew bundle check --global
-
-# Agent multiplexer; owns the Claude/Codex agent-state hooks. Also driven by
-# the dot_local/scripts/*herdr* helpers.
-brew "herdr"
-
-# JSON processor: chezmoi modify_settings.json.tmpl + the herdr helper scripts.
-brew "jq"
-
-# Codex config modify_ script builds a tomlkit venv with this.
-brew "python"
-
-# Terminal multiplexer: dot_local/scripts/tmux-sessionizer, tmux-llm-wikis.
-brew "tmux"
-
-# Fuzzy finder: tmux-sessionizer, herdr-workspacer.
-brew "fzf"
-
-# ripgrep (rg): herdr-workspacer.
-brew "ripgrep"
-
-# Third-party formula sources. `trusted: true` below permits their formulae on
-# a freshly bootstrapped machine.
-tap "derailed/k9s"
+# Taps
 tap "hashicorp/tap"
 
-# CLI tools to keep available on every managed machine.
-brew "btop"
-brew "chezmoi"
-brew "doctl"
-brew "gh"
-brew "glab"
-brew "hunk"
-brew "derailed/k9s/k9s", trusted: true
-brew "mole"
-brew "hashicorp/tap/terraform", trusted: true
+# Runtimes
+brew "python"
+
+# Utils
+brew "jq" # JSON processor
+brew "fzf" # Fuzzy finder
+brew "ripgrep" # Better grep
+
+# CLI tools
+brew "btop" # System monitor
+brew "chezmoi" # Dotfile manager
+brew "composer" # PHP dependency manager
+brew "doctl" # DigitalOcean CLI
+brew "gh" # GitHub CLI
+brew "glab" # GitLab CLI
+brew "hashicorp/tap/terraform" # Terraform CLI
+brew "herdr" # Coding agent multiplexer
+brew "k9s" # Kubernetes TUI
+brew "kubernetes-cli" # Kubernetes CLI
+brew "mole" # Mac cleanup tool
+brew "tmux" # Terminal multiplexer
+brew "tuicr" # Code review TUI
