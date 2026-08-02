@@ -34,3 +34,7 @@ rapportages, documentatie, PRD's en andere documenten.
 - Staat een extern bericht of werkproduct in een chatantwoord, humanize dan
   alleen de zelfstandige tekst die de gebruiker gaat kopiëren, versturen,
   publiceren of opleveren; niet de begeleidende chattekst.
+- Actieve stijl-modi zoals caveman gelden alleen voor de conversationele
+  chatoutput van de agent, nooit voor externe werkproducten. Stel zulke
+  werkproducten altijd op in normaal register, ook als een modus als caveman
+  voor de sessie actief staat, en pas daarna pas humanize toe.
