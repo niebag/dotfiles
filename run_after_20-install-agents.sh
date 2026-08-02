@@ -21,13 +21,7 @@ else
   curl -fsSL https://chatgpt.com/codex/install.sh | sh
 fi
 
-if command -v pi >/dev/null 2>&1; then
-  pi update
-else
-  curl -fsSL https://pi.dev/install.sh | sh
-fi
-
-for agent in claude codex pi; do
+for agent in claude codex; do
   if command -v "$agent" >/dev/null 2>&1; then
     printf '%s: %s\n' "$agent" "$("$agent" --version)"
   else

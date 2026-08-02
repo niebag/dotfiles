@@ -1,13 +1,13 @@
 #!/bin/sh
 
-# Install niebag skills with npx for Codex/Cursor/Pi and Claude's plugin system.
+# Install niebag skills with npx for Codex/Cursor and Claude's plugin system.
 
 set -eu
 
 if command -v npx >/dev/null 2>&1; then
-  npx -y skills add niebag/skills -g -y -a codex cursor pi
+  npx -y skills add niebag/skills -g -y -a codex cursor
 else
-  echo "npx not found; skipping niebag/skills install for Codex/Cursor/Pi" >&2
+  echo "npx not found; skipping niebag/skills install for Codex/Cursor" >&2
 fi
 
 if command -v claude >/dev/null 2>&1; then
