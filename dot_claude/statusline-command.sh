@@ -1,9 +1,7 @@
 #!/bin/sh
 
-# Ensure Homebrew and common tool paths are available in non-interactive shells
 export PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
 
-# Verify jq is available — if not, output a fallback and exit cleanly
 if ! command -v jq >/dev/null 2>&1; then
   printf "statusline: jq not found"
   exit 0

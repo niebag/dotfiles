@@ -1,19 +1,6 @@
 #!/bin/sh
 
-# Install the general-purpose skills from niebag/skills for every harness.
-#
-# - Codex, Cursor & Pi read their skills from locations managed by the skills
-#   CLI (https://skills.sh), so install them together. The CLI maps agents to
-#   their dirs automatically; we do NOT target claude-code with it (Claude gets
-#   these via the plugin below, so that would duplicate them).
-# - Claude Code gets them via its plugin marketplace instead: add + install the
-#   niebag-skills plugin, then refresh the marketplace and update the plugin to
-#   the latest revision (install alone is idempotent and never upgrades). All
-#   four commands are idempotent.
-#
-# Each tool's step is guarded and skipped if its CLI is absent (npx needs
-# node/nvm; claude is the Claude Code CLI). `npx skills add` re-copies the latest
-# skills on every run, so Codex/Cursor need no separate update step.
+# Install niebag skills with npx for Codex/Cursor/Pi and Claude's plugin system.
 
 set -eu
 

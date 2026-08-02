@@ -1,11 +1,6 @@
 #!/usr/bin/env bash
 
-# Pick a repository and create or focus its Herdr workspace.
-# New workspaces include agent, git, app, and zsh tabs.
-#
-# Usage:
-#   herdr-workspacer           # choose a repository with fzf
-#   herdr-workspacer <path>    # use the specified repository
+# Create or focus a Herdr workspace for a selected repository.
 
 if [[ $# -eq 1 ]]; then
     selected=$1

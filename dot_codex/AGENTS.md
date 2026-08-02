@@ -1,4 +1,5 @@
 ## LLM-Wiki
+
 Kenniskluis parent:
 ~/Library/Mobile Documents/iCloud~md~obsidian/Documents/
 

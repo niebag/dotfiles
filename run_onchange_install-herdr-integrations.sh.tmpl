@@ -1,12 +1,7 @@
 #!/bin/sh
 
-# Installs herdr's agent-state integrations for Claude Code and Codex.
-#
-# herdr owns the generated hook scripts (herdr-agent-state.sh) and the hook
-# registrations (Claude settings.json SessionStart, Codex hooks.json). Rather
-# than tracking those machine-specific files in chezmoi, we let herdr install
-# them here. The herdr version is baked into this script below, so a herdr
-# upgrade changes this file's content and run_onchange re-runs the installer.
+# Herdr owns generated agent-state hooks. Include its version so upgrades rerun
+# this script.
 
 {{- if lookPath "herdr" }}
 # herdr version: {{ output "herdr" "--version" | trim }}

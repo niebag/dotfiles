@@ -1,10 +1,6 @@
 #!/usr/bin/env bash
 
-# Create or focus an LLM wiki workspace in the default Herdr session.
-# The workspace contains one tab per isolated vault.
-#
-# Usage:
-#   herdr-llm-wikis
+# Create or focus the Herdr workspace for the LLM wiki vaults.
 
 WORKSPACE_LABEL="llm-wikis"
 WIKI_ROOT="$HOME/Library/Mobile Documents/iCloud~md~obsidian/Documents"

@@ -1,14 +1,7 @@
 #!/bin/sh
 
-# Installs the packages the rest of the dotfiles depend on, BEFORE chezmoi
-# applies files (so jq/python/herdr exist when the modify_ and integration
-# scripts run).
-#
-# The Brewfile is inlined here via `include`, so:
-#   - no dependency on ~/.Brewfile having been written yet (before-scripts run
-#     ahead of file application);
-#   - editing dot_Brewfile changes this script's rendered content, so
-#     run_onchange re-fires and installs the new packages.
+# Install packages before chezmoi writes its managed files.
+# Read the source Brewfile directly instead of relying on ~/.Brewfile.
 
 {{- if eq .chezmoi.os "darwin" }}
 set -eu

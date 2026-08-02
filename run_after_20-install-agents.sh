@@ -1,9 +1,6 @@
 #!/bin/sh
 
-# Install or update the coding-agent CLIs after chezmoi has applied their
-# configuration and before the skills installer runs. This is deliberately a
-# run_ script, not run_onchange_: `chezmoi apply` is the explicit machine-sync
-# action, so it should also bring these CLIs to their latest release.
+# Install or update coding-agent CLIs after chezmoi applies their configuration.
 
 set -eu
 

@@ -1,21 +1,11 @@
 #!/bin/sh
 
-# chezmoi modify_ script for ~/.codex/config.toml.
-#
-# Codex keeps a lot of machine-local / volatile state in this one file
-# (project trust entries, hook-state hashes, MCP server paths, marketplace
-# revisions, TUI counters). We only want to enforce a few portable prefs and
-# leave everything else exactly as Codex wrote it.
-#
-# jq can't do TOML, and dasel/taplo either mangle the file or can't set values,
-# so we use tomlkit (style-preserving) from a small dedicated venv that this
-# script bootstraps on first run. If Python/tomlkit are unavailable the script
-# passes the file through untouched so it can never corrupt config.toml.
+# Preserve unmanaged Codex state. Use tomlkit to retain TOML formatting; leave
+# the file untouched if it is unavailable.
 
 set -eu
 
-# Capture stdin (the current config.toml) BEFORE bootstrapping: venv/pip would
-# otherwise drain it, leaving Python to parse an empty document.
+# Read stdin before bootstrapping the venv.
 INPUT="$(mktemp "${TMPDIR:-/tmp}/chezmoi-codex-config.XXXXXX")"
 trap 'rm -f "$INPUT"' EXIT HUP INT TERM
 cat > "$INPUT"
