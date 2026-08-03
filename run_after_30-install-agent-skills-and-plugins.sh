@@ -3,8 +3,9 @@
 set -eu
 
 if command -v npx >/dev/null 2>&1; then
-  npx -y skills add niebag/skills -g -y -a codex
-  npx -y skills add JuliusBrussee/caveman -g -y -a codex
+  npx -y skills add niebag/skills --skill '*' -g -y -a codex
+  npx -y skills add JuliusBrussee/caveman --skill '*' -g -y -a codex
+  npx -y skills@latest add mattpocock/skills --skill '*' -g -y -a codex
 fi
 
 if command -v claude >/dev/null 2>&1; then
