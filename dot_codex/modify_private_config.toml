@@ -32,7 +32,7 @@ with open(sys.argv[1]) as f:
     doc = tomlkit.parse(f.read())
 
 doc["approval_policy"] = "never"
-doc["sandbox_mode"] = "workspace-write"
+doc["sandbox_mode"] = "danger-full-access"
 
 features = doc.get("features")
 if features is None:
