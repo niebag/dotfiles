@@ -17,6 +17,27 @@ Bij het openen van een vault:
 Detecteer de actieve vault op basis van werkdirectory of gespreksonderwerp.
 Fallback: vraag welke vault.
 
+## Proactieve kennisopslag
+
+Beoordeel tijdens en aan het einde van elk inhoudelijk gesprek of er duurzame
+kennis voor de actieve vault is ontstaan, bijvoorbeeld besluiten, technische
+inzichten, werkafspraken, oplossingspaden, onderzoek, of belangrijke
+concepten.
+
+Als de actieve vault duidelijk is en de inhoud waardevol genoeg is:
+1. Gebruik direct de `ingest`-skill met een beknopte, feitelijke samenvatting
+   van de relevante recente conversatie als bron.
+2. Bewaar alleen duurzame kennis; sla losse vragen, tijdelijke statusupdates,
+   herhaling en persoonlijke details zonder blijvende waarde over.
+3. Meld na afloop kort welke wiki-pagina's zijn gemaakt of bijgewerkt.
+
+Als de vault niet duidelijk is of de inhoud mogelijk privé of cross-vault is,
+stel eerst één gerichte vraag. Sla nooit cross-vault inhoud op.
+
+Doe dit proactief; wacht niet tot de gebruiker `/ingest` noemt.
+Verwerk een gesprek maximaal één keer, tenzij er daarna wezenlijk nieuwe
+duurzame kennis ontstaat.
+
 ## Humanize externe output
 
 Gebruik altijd de humanize skill voordat je tekst afrondt die de gebruiker naar
