@@ -34,11 +34,12 @@ if command -v claude >/dev/null 2>&1; then
   claude plugin marketplace add niebag/skills
   claude plugin marketplace add JuliusBrussee/caveman
   claude plugin marketplace add DietrichGebert/ponytail
+  claude plugin marketplace add anthropics/claude-plugins-official
   claude plugin marketplace update
 
   claude plugin install niebag-skills@niebag-skills
   claude plugin install caveman@caveman
-  claude plugin install mattpocock-skills
+  claude plugin install mattpocock-skills@claude-plugins-official
   claude plugin install ponytail@ponytail
 
   claude plugin update niebag-skills@niebag-skills
