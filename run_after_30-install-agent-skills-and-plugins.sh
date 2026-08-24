@@ -27,7 +27,10 @@ if command -v npx >/dev/null 2>&1; then
     grilling \
     handoff \
     teach \
-    writing-great-skills
+    to-questionnaire \
+    wait-what \
+    wizard \
+    writing-for-agents
 fi
 
 if command -v claude >/dev/null 2>&1; then
