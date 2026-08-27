@@ -23,4 +23,4 @@ brew "k9s" # Kubernetes TUI
 brew "kubernetes-cli" # Kubernetes CLI
 brew "mole" # Mac cleanup tool
 brew "tmux" # Terminal multiplexer
-brew "tuicr" # Code review TUI
+brew "hunk" # Code review TUI
