@@ -6,8 +6,8 @@ if [[ $# -eq 1 ]]; then
     selected=$1
 else
     selected=$( {
-        find ~/personal -mindepth 1 -maxdepth 1 -type d
-        find ~/notive ~/resolph -mindepth 2 -maxdepth 2 -type d
+        find "$HOME/personal" -mindepth 2 -maxdepth 3 -type d -name .git -prune -print | sed 's#/.git$##'
+        find "$HOME/notive" "$HOME/resolph" -mindepth 3 -maxdepth 4 -type d -name .git -prune -print | sed 's#/.git$##'
     } | fzf ) || exit 0
 fi
 
