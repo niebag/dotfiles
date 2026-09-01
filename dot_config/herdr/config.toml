@@ -10,3 +10,6 @@ status_indicators = "symbols"
 
 [ui.toast]
 delivery = "terminal"
+
+[ui.sound]
+enabled = false
