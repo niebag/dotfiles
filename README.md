@@ -4,20 +4,21 @@ Dotfiles managed with [chezmoi](https://www.chezmoi.io/).
 
 ## Install
 
-Install [chezmoi](https://www.chezmoi.io/install/) and [Homebrew](https://brew.sh/), then initialize and apply:
+Install [chezmoi](https://www.chezmoi.io/install/) and [Homebrew](https://brew.sh/), then initialize, review, and apply:
 
 ```sh
-chezmoi init --apply https://github.com/niebag/dotfiles.git
+chezmoi init https://github.com/niebag/dotfiles.git
+chezmoi diff
+chezmoi apply
 ```
 
-On macOS, `chezmoi apply` installs the Homebrew dependencies, configures
-coding-agent integrations, and refreshes agent CLIs and skills.
+`chezmoi apply` changes only managed configuration.
 
 ## Managed configuration
 
 - Homebrew formulae defined in [dot_Brewfile](dot_Brewfile).
-- Coding-agent configuration, integrations, and skills.
+- Coding-agent configuration and skills.
 - Terminal configuration and workspace helpers.
-- LLM wiki vault skeletons and instructions.
+- One non-overwriting LLM wiki bootstrap at `~/Obsidian/llm-wiki`.
 
 For details, see the relevant files in this repository.

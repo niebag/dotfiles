@@ -1,16 +1,14 @@
 ---
 name: lint
-description: Controleer de wiki/ van de actieve vault op structuurfouten, ontbrekende frontmatter en index-afwijkingen.
+description: Controleer de wiki/ in ~/Obsidian/llm-wiki op structuurfouten, ontbrekende frontmatter en index-afwijkingen.
 ---
 
-Controleer de wiki/ van de actieve vault op structuur en kwaliteit.
+Controleer de wiki/ in ~/Obsidian/llm-wiki op structuur en kwaliteit.
 
-De vault-root en structuurregels staan in de CLAUDE.md van de actieve vault.
-Lees die CLAUDE.md altijd eerst voor je begint.
+De structuurregels staan in ~/Obsidian/llm-wiki/AGENTS.md. Lees die altijd eerst.
 
-1. Bepaal de actieve vault als die niet duidelijk is (Notive, Resolph of Personal).
-2. Lees de vault-CLAUDE.md en wiki/index.md.
-3. Controleer:
+1. Lees ~/Obsidian/llm-wiki/AGENTS.md en wiki/index.md.
+2. Controleer:
    - Ontbrekende of onvolledige frontmatter (title, type, created, updated, source);
      een leeg `source:`-veld op een inhoudelijke pagina (type: person|concept|project|note)
      is een expliciete bevinding — elke inhoudelijke pagina hoort een bron te hebben
@@ -31,9 +29,9 @@ Lees die CLAUDE.md altijd eerst voor je begint.
    - Wachtrij: bestanden in raw/inbox/ die nog niet zijn verwerkt (geef lijst)
    - Bestanden in raw/ingested/ waarnaar geen enkele wiki-pagina verwijst via
      source:-veld of [[wikilink]] (mogelijke wees-ingest of verweesde writeback-bron)
-4. Rapporteer bevindingen per categorie. Geen goedkeuringen, alleen wat
+3. Rapporteer bevindingen per categorie. Geen goedkeuringen, alleen wat
    niet klopt.
-5. Stel concrete fixes voor maar voer ze niet automatisch uit — wacht op
+4. Stel concrete fixes voor maar voer ze niet automatisch uit — wacht op
    bevestiging.
 
 Raak raw/ nooit aan.

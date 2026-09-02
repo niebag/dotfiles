@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+workspace_label="llm-wiki"
+wiki_root="$HOME/Obsidian/llm-wiki"
+agent_command='codex -a on-request -s workspace-write'
+
+[[ -d $wiki_root ]] || { echo "Missing wiki: $wiki_root" >&2; exit 1; }
+
+workspace_id=$(herdr workspace list | jq -r --arg label "$workspace_label" '
+  first((.result.workspaces // .workspaces // [])[]? |
+    select(.label == $label or .workspace.label == $label) |
+    (.workspace_id // .workspace.workspace_id)) // empty
+')
+
+if [[ -n $workspace_id ]]; then
+  exec herdr workspace focus "$workspace_id"
+fi
+
+herdr workspace create --cwd "$wiki_root" --label "$workspace_label" --focus >/dev/null
+workspace_id=$(herdr workspace list | jq -r --arg label "$workspace_label" '
+  first((.result.workspaces // .workspaces // [])[]? |
+    select(.label == $label or .workspace.label == $label) |
+    (.workspace_id // .workspace.workspace_id)) // empty
+')
+[[ -n $workspace_id ]] || exit 1
+
+tab_id=$(herdr tab list --workspace "$workspace_id" | jq -r 'first((.result.tabs // .tabs // [])[]? | .tab_id) // empty')
+[[ -n $tab_id ]] || exit 1
+herdr tab rename "$tab_id" agent >/dev/null
+
+pane_id=$(herdr pane list --workspace "$workspace_id" | jq -r --arg tab_id "$tab_id" '
+  first((.result.panes // .panes // [])[]? | select(.tab_id == $tab_id) | .pane_id) // empty
+')
+[[ -n $pane_id ]] || exit 1
+herdr pane run "$pane_id" "$agent_command" >/dev/null

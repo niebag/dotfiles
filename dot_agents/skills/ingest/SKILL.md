@@ -1,27 +1,24 @@
 ---
 name: ingest
-description: Verwerk een bron naar wiki/-pagina's in de actieve vault. Bron kan een bestand in raw/ zijn of content direct uit de chat.
+description: Verwerk een bron naar wiki/-pagina's in ~/Obsidian/llm-wiki. Bron kan een bestand in raw/ zijn of content direct uit de chat.
 ---
 
-Verwerk een bron naar wiki/ in de actieve vault.
+Verwerk een bron naar wiki/ in ~/Obsidian/llm-wiki.
 
-De vault-root en structuurregels staan in de CLAUDE.md van de actieve vault.
-Lees die CLAUDE.md altijd eerst voor je begint.
+De structuurregels staan in ~/Obsidian/llm-wiki/AGENTS.md. Lees die altijd eerst.
 
-1. Bepaal de actieve vault als die niet duidelijk is (Notive, Resolph of Personal).
-2. Lees de vault-CLAUDE.md.
-3. Bepaal de bron:
+1. Bepaal de bron:
    - Chat-content meegestuurd → schrijf eerst weg naar
      `raw/inbox/YYYY-MM-DD-<naam>.md`, verwerk dan dat bestand.
    - Specifiek bestand in raw/ opgegeven → verwerk dat.
    - Niets opgegeven → verwerk alle bestanden in raw/inbox/.
 
-4. Dubbel-werk-check: controleer of de bron al eerder is verwerkt.
+2. Dubbel-werk-check: controleer of de bron al eerder is verwerkt.
    - Staat het bestand al in `raw/ingested/`? → overgeslagen (al gedaan).
    - Staat er al een wiki-pagina met dit bestand als `source:`? → signaleer
      en vraag bevestiging voor herverwerking.
 
-5. Bepaal het bron-type en stel de link in:
+3. Bepaal het bron-type en stel de link in:
    - **Markdown** (.md-bestand in raw/): link vanuit de wiki-pagina('s) direct
      met een `[[wikilink]]` naar de bron in de body.
    - **Niet-markdown** (PDF, afbeelding als zelfstandige bron, data-dump):
@@ -41,7 +38,7 @@ Lees die CLAUDE.md altijd eerst voor je begint.
      de markdown-bron volstaat. (Verwerk eerst tekst, bekijk daarna afbeeldingen
      apart.)
 
-6. Verwerk:
+4. Verwerk:
    - Bespreek de takeaways.
    - Schrijf of werk wiki-pagina('s) bij met correcte frontmatter
      (`source:` verwijst naar de primaire bron).
@@ -49,7 +46,7 @@ Lees die CLAUDE.md altijd eerst voor je begint.
    - Werk index.md bij (één regel per nieuwe of gewijzigde pagina).
    - Append log-regel: `## [YYYY-MM-DD] ingest | <titel>`
 
-7. Verplaats bronnen van `raw/inbox/` naar `raw/ingested/`:
+5. Verplaats bronnen van `raw/inbox/` naar `raw/ingested/`:
    - Geldt voor alle bestanden in raw/inbox/ die je zojuist hebt verwerkt
      (markdown én niet-markdown zoals PDFs).
    - Uitzondering: bestanden die thuishoren in `raw/assets/` verhuizen nooit.

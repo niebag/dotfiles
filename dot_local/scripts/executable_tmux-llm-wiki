@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+session="llm-wiki"
+wiki_root="$HOME/Obsidian/llm-wiki"
+agent_command='codex -a on-request -s workspace-write'
+
+[[ -d $wiki_root ]] || { echo "Missing wiki: $wiki_root" >&2; exit 1; }
+
+if ! tmux has-session -t="$session" 2>/dev/null; then
+  tmux new-session -ds "$session" -c "$wiki_root" -n agent
+  tmux send-keys -t "$session:agent" "$agent_command" Enter
+fi
+
+if [[ -z ${TMUX:-} ]]; then
+  exec tmux attach -t "$session"
+fi
+
+tmux switch-client -t "$session"

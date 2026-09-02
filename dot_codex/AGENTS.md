@@ -1,38 +1,26 @@
 ## LLM-Wiki
 
-Kenniskluis parent:
-~/Library/Mobile Documents/iCloud~md~obsidian/Documents/
+De enige wiki-vault staat in `~/Obsidian/llm-wiki`.
 
-Drie losse vaults, elk een eigen root en eigen CLAUDE.md:
-- Notive/   — Notive-werkcontext
-- Resolph/  — Resolph-werkcontext
-- Personal/ — persoonlijke context
-
-Elke vault is volledig geïsoleerd: geen cross-vault links, geen gedeelde data.
-
-Bij het openen van een vault:
-1. Lees ALTIJD eerst de CLAUDE.md in de vault-root van díe vault.
-2. Beperk je strikt tot die vault. Ken de andere vaults niet.
-
-Detecteer de actieve vault op basis van werkdirectory of gespreksonderwerp.
-Fallback: vraag welke vault.
+Lees bij wiki-werk altijd eerst `~/Obsidian/llm-wiki/AGENTS.md` en werk uitsluitend
+binnen die vault.
 
 ## Proactieve kennisopslag
 
 Beoordeel tijdens en aan het einde van elk inhoudelijk gesprek of er duurzame
-kennis voor de actieve vault is ontstaan, bijvoorbeeld besluiten, technische
+kennis voor deze wiki is ontstaan, bijvoorbeeld besluiten, technische
 inzichten, werkafspraken, oplossingspaden, onderzoek, of belangrijke
 concepten.
 
-Als de actieve vault duidelijk is en de inhoud waardevol genoeg is:
+Als de inhoud waardevol genoeg is:
 1. Gebruik direct de `ingest`-skill met een beknopte, feitelijke samenvatting
    van de relevante recente conversatie als bron.
 2. Bewaar alleen duurzame kennis; sla losse vragen, tijdelijke statusupdates,
    herhaling en persoonlijke details zonder blijvende waarde over.
 3. Meld na afloop kort welke wiki-pagina's zijn gemaakt of bijgewerkt.
 
-Als de vault niet duidelijk is of de inhoud mogelijk privé of cross-vault is,
-stel eerst één gerichte vraag. Sla nooit cross-vault inhoud op.
+Als de plaatsing in de wiki onduidelijk is of de inhoud buiten scope kan vallen,
+stel eerst één gerichte vraag.
 
 Doe dit proactief; wacht niet tot de gebruiker `/ingest` noemt.
 Verwerk een gesprek maximaal één keer, tenzij er daarna wezenlijk nieuwe

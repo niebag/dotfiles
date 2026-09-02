@@ -1,6 +1,3 @@
-# Taps
-tap "hashicorp/tap"
-
 # Runtimes
 brew "node" # JavaScript runtime
 brew "python"
@@ -14,13 +11,8 @@ brew "ripgrep" # Better grep
 brew "btop" # System monitor
 brew "chezmoi" # Dotfile manager
 brew "composer" # PHP dependency manager
-brew "doctl" # DigitalOcean CLI
 brew "gh" # GitHub CLI
-brew "glab" # GitLab CLI
-brew "hashicorp/tap/terraform" # Terraform CLI
 brew "herdr" # Coding agent multiplexer
-brew "k9s" # Kubernetes TUI
-brew "kubernetes-cli" # Kubernetes CLI
 brew "mole" # Mac cleanup tool
 brew "tmux" # Terminal multiplexer
 brew "hunk" # Code review TUI
