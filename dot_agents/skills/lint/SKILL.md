@@ -1,24 +1,24 @@
 ---
 name: lint
-description: Controleer de wiki/ in ~/Obsidian/llm-wiki op structuurfouten, ontbrekende frontmatter en index-afwijkingen.
+description: Controleer de wiki in ~/Obsidian/Hermes op structuurfouten, ontbrekende frontmatter en index-afwijkingen.
 ---
 
-Controleer de wiki/ in ~/Obsidian/llm-wiki op structuur en kwaliteit.
+Controleer de wiki in ~/Obsidian/Hermes op structuur en kwaliteit.
 
-De structuurregels staan in ~/Obsidian/llm-wiki/AGENTS.md. Lees die altijd eerst.
+De structuurregels staan in ~/Obsidian/Hermes/SCHEMA.md. Lees die altijd eerst.
 
-1. Lees ~/Obsidian/llm-wiki/AGENTS.md en wiki/index.md.
+1. Lees ~/Obsidian/Hermes/SCHEMA.md en index.md.
 2. Controleer:
    - Ontbrekende of onvolledige frontmatter (title, type, created, updated, source);
      een leeg `source:`-veld op een inhoudelijke pagina (type: person|concept|project|note)
      is een expliciete bevinding — elke inhoudelijke pagina hoort een bron te hebben
      (upload in raw/ óf gespreksbron in raw/ingested/)
    - Wiki-pagina's met een source-veld dat naar een niet-bestaand raw/-bestand wijst
-   - Stubs in wiki/sources/ met een `file:` dat naar een niet-bestaand
+   - Stubs in sources/ met een `file:` dat naar een niet-bestaand
      raw/-bestand wijst
    - Niet-markdown bronnen in raw/ waarnaar een wiki-pagina direct verwijst
-     zonder bijbehorende stub in wiki/sources/ (signaleer als ontbrekende stub)
-   - Pagina's in wiki/ die niet in index.md staan
+     zonder bijbehorende stub in sources/ (signaleer als ontbrekende stub)
+   - Wiki-pagina's buiten raw/ en sources/ die niet in index.md staan
    - Pagina's in index.md die niet als bestand bestaan
    - Broken wikilinks (verwijzingen naar niet-bestaande pagina's)
    - Weespagina's zonder enige inbound link

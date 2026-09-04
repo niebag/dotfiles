@@ -1,8 +1,8 @@
 ## LLM-Wiki
 
-De enige wiki-vault staat in `~/Obsidian/llm-wiki`.
+De enige wiki-vault staat in `~/Obsidian/Hermes`.
 
-Lees bij wiki-werk altijd eerst `~/Obsidian/llm-wiki/AGENTS.md` en werk uitsluitend
+Lees bij wiki-werk altijd eerst `~/Obsidian/Hermes/SCHEMA.md` en werk uitsluitend
 binnen die vault.
 
 ## Proactieve kennisopslag

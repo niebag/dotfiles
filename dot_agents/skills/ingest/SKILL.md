@@ -1,11 +1,12 @@
 ---
 name: ingest
-description: Verwerk een bron naar wiki/-pagina's in ~/Obsidian/llm-wiki. Bron kan een bestand in raw/ zijn of content direct uit de chat.
+description: Verwerk een bron naar wiki-pagina's in ~/Obsidian/Hermes. Bron kan een bestand in raw/ zijn of content direct uit de chat.
 ---
 
-Verwerk een bron naar wiki/ in ~/Obsidian/llm-wiki.
+Verwerk een bron naar wiki-pagina's in ~/Obsidian/Hermes.
 
-De structuurregels staan in ~/Obsidian/llm-wiki/AGENTS.md. Lees die altijd eerst.
+De structuurregels staan in ~/Obsidian/Hermes/SCHEMA.md. Lees die altijd eerst,
+samen met index.md en de laatste regels van log.md.
 
 1. Bepaal de bron:
    - Chat-content meegestuurd → schrijf eerst weg naar
@@ -22,11 +23,11 @@ De structuurregels staan in ~/Obsidian/llm-wiki/AGENTS.md. Lees die altijd eerst
    - **Markdown** (.md-bestand in raw/): link vanuit de wiki-pagina('s) direct
      met een `[[wikilink]]` naar de bron in de body.
    - **Niet-markdown** (PDF, afbeelding als zelfstandige bron, data-dump):
-     maak een stub aan in `wiki/sources/<naam>.md` (als die nog niet bestaat):
+     maak een stub aan in `sources/<naam>.md` (als die nog niet bestaat):
      ```
      ---
      type: source
-     file: ../../raw/<submap>/<bestandsnaam>
+     file: ../raw/<submap>/<bestandsnaam>
      ingested: <YYYY-MM-DD>
      ---
      Bron: <korte omschrijving> (<bestandstype>).
@@ -53,7 +54,7 @@ De structuurregels staan in ~/Obsidian/llm-wiki/AGENTS.md. Lees die altijd eerst
    - Werk daarna eventuele expliciete paden in `source:`-velden of
      stub-`file:`-velden bij naar `raw/ingested/<bestandsnaam>`.
 
-Stubs gaan in `wiki/sources/`, niet in raw/.
+Stubs gaan in `sources/`, niet in raw/.
 Append alleen — overschrijf nooit bestaande wiki-content.
 Raak raw/ niet aan behalve de inbox→ingested verplaatsing in stap 7 en
 het aanmaken van een nieuw bestand in raw/inbox/ voor chat-content (stap 3).

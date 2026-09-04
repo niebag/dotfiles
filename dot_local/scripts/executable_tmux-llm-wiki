@@ -3,7 +3,7 @@
 set -euo pipefail
 
 session="llm-wiki"
-wiki_root="$HOME/Obsidian/llm-wiki"
+wiki_root="$HOME/Obsidian/Hermes"
 agent_command='codex -a on-request -s workspace-write'
 
 [[ -d $wiki_root ]] || { echo "Missing wiki: $wiki_root" >&2; exit 1; }
