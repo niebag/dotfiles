@@ -16,3 +16,6 @@ brew "herdr" # Coding agent multiplexer
 brew "mole" # Mac cleanup tool
 brew "tmux" # Terminal multiplexer
 brew "hunk" # Code review TUI
+
+# Apps
+cask "orbstack" # Containers and Linux VMs
