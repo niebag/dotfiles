@@ -1,10 +1,3 @@
-## LLM-Wiki
-
-De enige wiki-vault staat in `~/Obsidian/Hermes`.
-
-Lees bij wiki-werk altijd eerst `~/Obsidian/Hermes/SCHEMA.md` en werk uitsluitend
-binnen die vault.
-
 ## Proactieve kennisopslag
 
 Beoordeel tijdens en aan het einde van elk inhoudelijk gesprek of er duurzame
@@ -13,8 +6,8 @@ inzichten, werkafspraken, oplossingspaden, onderzoek, of belangrijke
 concepten.
 
 Als de inhoud waardevol genoeg is:
-1. Gebruik direct de `ingest`-skill met een beknopte, feitelijke samenvatting
-   van de relevante recente conversatie als bron.
+1. Gebruik direct de `llm-wiki`-skill om een beknopte, feitelijke samenvatting
+   van de relevante recente conversatie te ingesten.
 2. Bewaar alleen duurzame kennis; sla losse vragen, tijdelijke statusupdates,
    herhaling en persoonlijke details zonder blijvende waarde over.
 3. Meld na afloop kort welke wiki-pagina's zijn gemaakt of bijgewerkt.

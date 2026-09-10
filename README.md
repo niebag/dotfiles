@@ -19,6 +19,6 @@ chezmoi apply
 - Homebrew formulae defined in [dot_Brewfile](dot_Brewfile).
 - Coding-agent configuration and skills.
 - Terminal configuration and workspace helpers.
-- Coding-agent LLM wiki skills (ingest/query/lint) targeting `~/Obsidian/Hermes`.
+- Coding-agent LLM wiki skill targeting `~/obsidian/llm-wiki`.
 
 For details, see the relevant files in this repository.
