@@ -28,6 +28,10 @@ opnieuw afgeleid.
 `SCHEMA.md` is leidend voor alle inhoudelijke regels. Deze skill beschrijft
 alleen de werkwijze.
 
+Op een verse machine zet `run_after_05-initialize-llm-wiki.sh` de lege structuur
+neer. Staan `Domain` of `Tag Taxonomy` in `SCHEMA.md` nog op TODO, vul die dan
+eerst samen met de gebruiker in — zonder domein en taxonomie is elke ingest gokwerk.
+
 ## Oriëntatie — altijd eerst
 
 Voor elke operatie, elke sessie:
