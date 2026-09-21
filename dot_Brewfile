@@ -10,6 +10,7 @@ brew "ripgrep" # Better grep
 # CLI tools
 brew "btop" # System monitor
 brew "chezmoi" # Dotfile manager
+brew "cloudflared" # Cloudflare Tunnel client
 brew "composer" # PHP dependency manager
 brew "gh" # GitHub CLI
 brew "herdr" # Coding agent multiplexer

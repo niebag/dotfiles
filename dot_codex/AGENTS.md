@@ -15,7 +15,7 @@ Als de inhoud waardevol genoeg is:
 Als de plaatsing in de wiki onduidelijk is of de inhoud buiten scope kan vallen,
 stel eerst één gerichte vraag.
 
-Doe dit proactief; wacht niet tot de gebruiker `/ingest` noemt.
+Doe dit proactief; wacht niet tot de gebruiker `/llm-wiki` noemt.
 Verwerk een gesprek maximaal één keer, tenzij er daarna wezenlijk nieuwe
 duurzame kennis ontstaat.
 
