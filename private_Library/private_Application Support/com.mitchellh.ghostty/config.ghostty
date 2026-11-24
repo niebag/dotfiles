@@ -1,3 +1,0 @@
-theme = catppuccin-mocha.conf
-cursor-style = block
-shell-integration-features = no-cursor

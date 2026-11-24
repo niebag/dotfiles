@@ -13,10 +13,8 @@ brew "chezmoi" # Dotfile manager
 brew "cloudflared" # Cloudflare Tunnel client
 brew "composer" # PHP dependency manager
 brew "gh" # GitHub CLI
-brew "herdr" # Coding agent multiplexer
 brew "mole" # Mac cleanup tool
 brew "tmux" # Terminal multiplexer
-brew "hunk" # Code review TUI
 
 # Apps
 cask "orbstack" # Containers and Linux VMs
